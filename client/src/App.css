@@ -7,6 +7,7 @@ body {
 
 @font-face {
   font-family: Apercu;
+  font-weight: 100;
   src: url("./fonts/Apercu\ Pro\ Regular.otf") format("opentype");
 }
 
@@ -18,7 +19,7 @@ body {
 
 
 @font-face {
-  font-family: Apercu;
-  font-weight: medium;
+  font-family: ApercuMed;
+  font-weight: 200;
   src: url("./fonts/Apercu\ Pro\ Medium.otf") format("opentype");
 }
