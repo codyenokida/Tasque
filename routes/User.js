@@ -17,7 +17,6 @@ const signToken = (userID) => {
 userRouter.post('/register', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
-    const role = req.body.role;
     User.findOne({username}, (err, user) => {
         if (err)
             res.status(500).json({message: {msgBody: "An Error Has Occurred", msgError: true}});
@@ -25,7 +24,7 @@ userRouter.post('/register', (req, res) => {
             res.status(500).json({message: {msgBody: "Username is already taken", msgError: true}});
         else {
             const newUser = new User({
-                username, password, role
+                username, password
             });
             newUser.save(err => {
                 if (err)
@@ -42,16 +41,15 @@ userRouter.post('/login', passport.authenticate('local', {session: false}), (req
         //const { _id, username, role } = req.user;
         const _id = req.user._id;
         const username = req.user.username;
-        const role = req.user.role;
         const token = signToken(_id);
         res.cookie('access_token', token, { httpOnly: true, sameSite: true});
-        res.status(200).json({isAuthenticated: true, user: {username, role}});
+        res.status(200).json({isAuthenticated: true, user: {username}});
     }
 });
 
 userRouter.get('/logout', passport.authenticate('jwt', {session: false}), (req, res) => {
     res.clearCookie('access_token');
-    res.json({ user: { username: '', role: ''}, success: true })
+    res.json({ user: { username: ''}, success: true })
 });
 
 userRouter.post('/todo', passport.authenticate('jwt', {session: false}), (req, res) => {

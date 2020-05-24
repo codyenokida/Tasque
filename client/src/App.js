@@ -1,14 +1,15 @@
-import React, { useContext } from 'react';
-import { AuthContext } from './Context/AuthContext';
+import React from 'react';
+import Home from './Components/Home/Home';
+import Todo from './Components/Todo/Todo'
+import {BrowserRouter as Router, Route} from 'react-router-dom';
+import './App.css'
 
 function App() {
-  const { user, setUser, isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
-  console.log(user);
-  console.log(isAuthenticated);
   return (
-    <div className="App">
-      Hello
-    </div>
+    <Router>
+      <Route exact path="/" component={Home}/>
+      <Route path="/todo" component={Todo}/>
+    </Router>
   );
 }
 
