@@ -6,6 +6,7 @@ const JWT = require('jsonwebtoken');
 
 const User = require('../models/User');
 const Todo = require('../models/Todo');
+const Category = require('../models/Category')
 
 const signToken = (userID) => {
     return JWT.sign({
@@ -58,19 +59,25 @@ userRouter.post('/todo', passport.authenticate('jwt', {session: false}), (req, r
         if (err)
             res.status(200).json({message: {msgBody: "An Error Has Occurred", msgError: true}});
         else {
-            req.user.todos.push(todo);
-            req.user.save(err => {
-                if (err)
-                    res.status(200).json({message: {msgBody: "An Error Has Occurred", msgError: true}});
-                else 
-                    res.status(500).json({message: {msgBody: "Successfully created todo", msgError: false}});
-            });
+            const _id = req.user.categories[req.body.index];
+            // find by document id and update and push item in array
+            Category.findByIdAndUpdate(_id,
+                {$push: {todos: todo}},
+                {safe: true, upsert: true},
+                function(err, document) {
+                    if (err) {
+                        res.status(500).json({message: {msgBody: "An Error has Occurred", msgError: true}});
+                    }else{
+                        res.status(200).json({todos: document.todos, authenticate : true});
+                    }
+                }
+            );
         }
     });
 });
 
 userRouter.get('/todos', passport.authenticate('jwt', {session: false}), (req, res) => {
-    User.findById({_id : req.user._id}).populate('todos').exec((err, document) => {
+    Category.findById({_id : req.user.categories[req.query.id]}).populate('todos').exec((err, document) => {
         if (err)
             res.status(500).json({message: {msgBody: "An Error has Occurred", msgError: true}});
         else {
@@ -79,12 +86,33 @@ userRouter.get('/todos', passport.authenticate('jwt', {session: false}), (req, r
     });
 });
 
-userRouter.get('/admin', passport.authenticate('jwt', {session : false}), (req, res) => {
-    if (req.user.role === 'admin'){
-        res.status(200).json({message : {msgBody : 'You are an admin', msgError : false}});
-    }
-    else
-        res.status(403).json({message : {msgBody : "You're not an admin,go away", msgError : true}});
+// Route to Create a Category Which Includes Todos
+userRouter.post('/category', passport.authenticate('jwt', {session: false}), (req, res) => {
+    const category = new Category(req.body);
+    category.save(err => {
+        if (err)
+            res.status(200).json({message: {msgBody: "An Error Has Occurred", msgError: true}});
+        else {
+            req.user.categories.push(category);
+            req.user.save(err => {
+                if (err)
+                    res.status(200).json({message: {msgBody: "An Error Has Occurred", msgError: true}});
+                else 
+                    res.status(500).json({message: {msgBody: "Successfully created a category", msgError: false}});
+            });
+        }
+    });
+});
+
+// Get request for categories
+userRouter.get('/categories', passport.authenticate('jwt', {session: false}), (req, res) => {
+    User.findById({_id : req.user._id}).populate('categories').exec((err, document) => {
+        if (err)
+            res.status(500).json({message: {msgBody: "An Error has Occurred", msgError: true}});
+        else {
+             res.status(200).json({categories: document.categories, authenticate : true});
+        }
+    });
 });
 
 userRouter.get('/authenticated', passport.authenticate('jwt', {session : false}), (req,res) => {

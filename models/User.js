@@ -10,8 +10,8 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    todos: [{
-        type: mongoose.Schema.Types.ObjectId, ref: 'Todo'
+    categories: [{
+        type: mongoose.Schema.Types.ObjectId, ref: 'Category'
     }]
 });
 

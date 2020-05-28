@@ -11,7 +11,6 @@ const useStyles = makeStyles((theme) => ({
     overflowX: 'hidden'
   },
   paper: {
-    textAlign: 'center',
     color: theme.palette.text.secondary,
     width: '90%',
     height: '90%',
@@ -92,7 +91,7 @@ const Home = props => {
         if(isAuthenticated){
             authContext.setUser(user);
             authContext.setIsAuthenticated(isAuthenticated);
-            props.history.push('/todo')
+            props.history.push('/dashboard')
         }
         else
             setMessage(message);
@@ -106,7 +105,7 @@ const Home = props => {
         setMessage(message);
         if (!message.msgError) {
             timeID = setTimeout(() => {
-                props.history.push('/todo');
+                props.history.push('/dashboard');
             }, 2000);
         } 
     });
@@ -120,6 +119,7 @@ const Home = props => {
             <Grid 
             xs={12} sm={6}
             container
+            item
             spacing={0}
             direction="column"
             alignItems="center"
@@ -189,6 +189,7 @@ const Home = props => {
             <Grid 
                 xs={12} sm={6}
                 container
+                item
                 spacing={0}
                 alignItems="center"
                 justify="center"
@@ -197,7 +198,7 @@ const Home = props => {
                 className={classes.paper}>
                     <div style={{padding: 50}}>
                         <h1 style={{color: '#262B3F'}}>How does <span style={{color: '#EDB57B'}}>Tasque</span> work?</h1>
-                        <p><span style={{color: '#EDB57B'}}>Tasque</span> is a simple task manager! Start your own personalized workspace and keep track of tasks. Being by creating a category and then creating a task.</p>
+                        <p><span style={{color: '#EDB57B'}}>Tasque</span> is a simple task manager! Start your own personalized workspace and keep track of tasks. Begin by creating a category and then creating a task.</p>
                     </div>
                 </Paper>
             </Grid>
